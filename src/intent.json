@@ -1,0 +1,160 @@
+{
+  "intents": [
+    {
+      "intent": "GetTransactionDetails",
+      "pattern": [
+        "Can you provide details for InvoiceNo 536365?",
+        "What items were purchased with InvoiceNo 536365?",
+        "I need information about transaction InvoiceNo 536365."
+      ],
+      "responses": [
+        "Sure! Let me fetch the details for you.",
+        "One moment while I retrieve the transaction details.",
+        "Of course! Here are the transaction details you requested."
+      ]
+    },
+    {
+      "intent": "SearchProduct",
+      "pattern": [
+        "What is StockCode 85123A?",
+        "Can you tell me about StockCode 85123A?",
+        "What is the description of StockCode 85123A?"
+      ],
+      "responses": [
+        "StockCode 85123A corresponds to a product named 'WHITE HANGING HEART T-LIGHT HOLDER'.",
+        "The description for StockCode 85123A is 'WHITE HANGING HEART T-LIGHT HOLDER'.",
+        "StockCode 85123A represents 'WHITE HANGING HEART T-LIGHT HOLDER'."
+      ]
+    },
+    {
+      "intent": "AnalysePurchaseTrends",
+      "pattern": [
+        "What are the top-selling products?",
+        "Can you analyze the quantity trends?",
+        "Provide insights into purchasing trends."
+      ],
+      "responses": [
+        "Here are the top-selling products based on sales data analysis.",
+        "Let me analyze the quantity trends for you.",
+        "I'll provide insights into purchasing trends shortly."
+      ]
+    },
+    {
+      "intent": "TimeBasedAnalysis",
+      "pattern": [
+        "Can you analyze sales trends by InvoiceDate?",
+        "Show me trends based on InvoiceDate.",
+        "I need time-based trend analysis."
+      ],
+      "responses": [
+        "Sure! Let's analyze sales trends based on InvoiceDate.",
+        "I'll generate a time-based trend analysis report for you.",
+        "Time-based trend analysis coming right up!"
+      ]
+    },
+    {
+      "intent": "RevenueAnalysis",
+      "pattern": [
+        "Calculate revenue for a specific period.",
+        "What is the total revenue generated?",
+        "Revenue analysis based on UnitPrice and Quantity."
+      ],
+      "responses": [
+        "Let me calculate the revenue for the specified period.",
+        "The total revenue generated will be calculated shortly.",
+        "I'll perform revenue analysis based on UnitPrice and Quantity."
+      ]
+    },
+    {
+      "intent": "GeographicalSegmentation",
+      "pattern": [
+        "Which countries are our customers from?",
+        "Can you segment customers by Country?",
+        "Geographical analysis based on customer location."
+      ],
+      "responses": [
+        "Let's analyze which countries our customers are from.",
+        "I'll segment customers by Country for geographical analysis.",
+        "Geographical analysis based on customer location is underway."
+      ]
+    },
+    {
+      "intent": "GenerateBarChart",
+      "pattern": [
+        "Can you generate a bar chart showing sales performance by region for the past quarter?",
+        "Show me a bar chart of sales performance by region.",
+        "I'd like to see a bar chart of sales performance by region."
+      ],
+      "responses": [
+        "Sure! I'll generate a bar chart showing sales performance by region for the past quarter.",
+        "Generating a bar chart of sales performance by region...",
+        "Here's a bar chart showing sales performance by region for the past quarter."
+      ]
+    },
+    {
+      "intent": "GenerateLineChart",
+      "pattern": [
+        "Can you provide a line chart illustrating the trend in inventory levels over the past year?",
+        "Show me a line chart of inventory levels over the past year.",
+        "I need a line chart illustrating the trend in inventory levels."
+      ],
+      "responses": [
+        "Certainly! I'll provide a line chart illustrating the trend in inventory levels over the past year.",
+        "Generating a line chart of inventory levels over the past year...",
+        "Here's a line chart illustrating the trend in inventory levels over the past year."
+      ]
+    },
+    {
+      "intent": "GeneratePieChart",
+      "pattern": [
+        "I'd like to see a pie chart depicting the distribution of product categories in our inventory.",
+        "Show me a pie chart of product category distribution in our inventory.",
+        "Can you provide a pie chart of product category distribution?"
+      ],
+      "responses": [
+        "Of course! I'll generate a pie chart depicting the distribution of product categories in our inventory.",
+        "Generating a pie chart of product category distribution...",
+        "Here's a pie chart depicting the distribution of product categories in our inventory."
+      ]
+    },
+    {
+      "intent": "GenerateScatterPlot",
+      "pattern": [
+        "Can you generate a scatter plot showing the correlation between shipping distance and delivery time?",
+        "Show me a scatter plot of shipping distance versus delivery time.",
+        "I'd like to see a scatter plot of shipping distance and delivery time."
+      ],
+      "responses": [
+        "Certainly! I'll generate a scatter plot showing the correlation between shipping distance and delivery time.",
+        "Generating a scatter plot of shipping distance versus delivery time...",
+        "Here's a scatter plot showing the correlation between shipping distance and delivery time."
+      ]
+    },
+    {
+      "intent": "GenerateHeatmap",
+      "pattern": [
+        "Can you provide a heatmap of customer satisfaction ratings by product category?",
+        "Show me a heatmap of customer satisfaction ratings by product category.",
+        "I need a heatmap of customer satisfaction ratings."
+      ],
+      "responses": [
+        "Sure! I'll provide a heatmap of customer satisfaction ratings by product category.",
+        "Generating a heatmap of customer satisfaction ratings by product category...",
+        "Here's a heatmap of customer satisfaction ratings by product category."
+      ]
+    },
+    {
+      "intent": "GenerateHistogram",
+      "pattern": [
+        "I need a histogram showing the distribution of order values for the past month.",
+        "Show me a histogram of order values for the past month.",
+        "Can you provide a histogram of order values?"
+      ],
+      "responses": [
+        "Of course! I'll provide a histogram showing the distribution of order values for the past month.",
+        "Generating a histogram of order values for the past month...",
+        "Here's a histogram showing the distribution of order values for the past month."
+      ]
+    }
+  ]
+}
