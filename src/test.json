@@ -1,0 +1,53 @@
+{
+    "intents": [
+      {
+        "pattern": "Could you please provide the transaction details for InvoiceNo 536364?",
+        "intent": "GetTransactionDetails"
+      },
+      {
+        "pattern": "I'm curious about StockCode 22423. Can you tell me more about it?",
+        "intent": "SearchProduct"
+      },
+      {
+        "pattern": "Can you analyze the trends in customer preferences?",
+        "intent": "AnalysePurchaseTrends"
+      },
+      {
+        "pattern": "Perform an analysis of sales trends by month, please.",
+        "intent": "TimeBasedAnalysis"
+      },
+      {
+        "pattern": "What was the revenue for the last quarter?",
+        "intent": "RevenueAnalysis"
+      },
+      {
+        "pattern": "Could you segment customers by their regions?",
+        "intent": "GeographicalSegmentation"
+      },
+      {
+        "pattern": "I'd like to see a bar chart illustrating sales performance.",
+        "intent": "GenerateBarChart"
+      },
+      {
+        "pattern": "Show me the inventory levels over the past month.",
+        "intent": "GenerateLineChart"
+      },
+      {
+        "pattern": "Could you generate a pie chart showing product categories?",
+        "intent": "GeneratePieChart"
+      },
+      {
+        "pattern": "Could you plot shipping distance against delivery time?",
+        "intent": "GenerateScatterPlot"
+      },
+      {
+        "pattern": "Please provide a heatmap of customer satisfaction ratings.",
+        "intent": "GenerateHeatmap"
+      },
+      {
+        "pattern": "I'd like to see a histogram of order values for the past year.",
+        "intent": "GenerateHistogram"
+      }
+    ]
+  }
+  
