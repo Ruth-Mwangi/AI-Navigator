@@ -2,10 +2,34 @@
   "intents": [
     {
       "intent": "GetTransactionDetails",
-      "pattern": [
+      "patterns": [
         "Can you provide details for InvoiceNo 536365?",
         "What items were purchased with InvoiceNo 536365?",
-        "I need information about transaction InvoiceNo 536365."
+        "I need information about transaction InvoiceNo 536365.",
+        "Details for InvoiceNo 536365, please?",
+        "What can you tell me about InvoiceNo 536365?",
+        "I'm interested in the specifics of InvoiceNo 536365.",
+        "Provide transaction details for InvoiceNo 536365.",
+        "Retrieve information for InvoiceNo 536365.",
+        "Can you give me a breakdown of InvoiceNo 536365?",
+        "I need to know more about the transaction with InvoiceNo 536365.",
+        "Details on InvoiceNo 536365, please.",
+        "Give me the scoop on InvoiceNo 536365.",
+        "Provide details on the purchase with InvoiceNo 536365.",
+        "Can you provide details for Transaction ID 536365?",
+        "What were the items bought under Transaction ID 536365?",
+        "I'd like to know more about the purchase with Transaction ID 536365.",
+        "Details on Transaction ID 536365, please.",
+        "What items were included in Transaction ID 536365?",
+        "Give me specifics about Transaction ID 536365.",
+        "I need a breakdown of the purchase with Transaction ID 536365.",
+        "Can you fetch details for Transaction ID 536365?",
+        "Provide information on the transaction associated with Transaction ID 536365.",
+        "Details regarding Transaction ID 536365, please.",
+        "What was the total amount spent on Invoice No. {InvoiceNo}",
+        "Can you show me the receipt for Invoice No. {InvoiceNo}",
+        "When was Invoice No. {InvoiceNo} placed?",
+        "Who placed Invoice No. {InvoiceNo}"
       ],
       "responses": [
         "Sure! Let me fetch the details for you.",
@@ -15,10 +39,27 @@
     },
     {
       "intent": "SearchProduct",
-      "pattern": [
+      "patterns": [
         "What is StockCode 85123A?",
         "Can you tell me about StockCode 85123A?",
-        "What is the description of StockCode 85123A?"
+        "What is the description of StockCode 85123A?",
+        "Describe StockCode 85123A.",
+        "I want details about StockCode 85123A.",
+        "What can you tell me about StockCode 85123A?",
+        "Looking for information on StockCode 85123A.",
+        "Describe the product corresponding to StockCode 85123A.",
+        "Can you provide details about the item with StockCode 85123A?",
+        "What's the description of the product linked to StockCode 85123A?",
+        "Give me information on the item represented by StockCode 85123A.",
+        "What product matches StockCode 85123A?",
+        "I'd like details on the product identified by StockCode 85123A.",
+        "Describe the item associated with StockCode 85123A.",
+        "What can you tell me about StockCode 85123A's product?",
+        "Provide specifics about the product with StockCode 85123A.",
+        "Details on the product for StockCode 85123A?",
+        "What category does StockCode {StockCode} belong to?",
+        "Are there any images available for StockCode {StockCode}?",
+        "What's the current stock level for StockCode {StockCode}?"
       ],
       "responses": [
         "StockCode 85123A corresponds to a product named 'WHITE HANGING HEART T-LIGHT HOLDER'.",
@@ -28,10 +69,33 @@
     },
     {
       "intent": "AnalysePurchaseTrends",
-      "pattern": [
+      "patterns": [
         "What are the top-selling products?",
         "Can you analyze the quantity trends?",
-        "Provide insights into purchasing trends."
+        "Provide insights into purchasing trends.",
+        "Identify recent patterns in customer purchases.",
+        "Analyze changes in purchasing behavior.",
+        "Provide insights into fluctuations in sales data.",
+        "What trends are emerging in customer buying habits?",
+        "Give me an overview of recent purchase trends.",
+        "Analyze recent shifts in purchasing patterns.",
+        "I'd like to understand the current trends in sales.",
+        "What are the latest buying trends?",
+        "Provide insights into recent changes in purchasing behavior.",
+        "Analyze recent purchasing trends for me.",
+        "Identify trends in purchasing behavior.",
+        "Analyze patterns in sales data.",
+        "I'm interested in trends in customer purchases.",
+        "Can you provide insights into buying trends?",
+        "Give me an overview of purchase trends.",
+        "Analyze purchasing habits for me.",
+        "I want to understand our sales trends better.",
+        "What are the current buying trends?",
+        "Provide insights into recent changes in purchasing behavior.",
+        "Can you identify any seasonal trends in purchases?",
+        "How have buying habits changed for {Product Category} in the past year?",
+        "Compare recent purchase trends to the same period last year.",
+        "What are the top-selling products for customers in {Country/Region}?"
       ],
       "responses": [
         "Here are the top-selling products based on sales data analysis.",
@@ -41,10 +105,33 @@
     },
     {
       "intent": "TimeBasedAnalysis",
-      "pattern": [
+      "patterns": [
         "Can you analyze sales trends by InvoiceDate?",
         "Show me trends based on InvoiceDate.",
-        "I need time-based trend analysis."
+        "I need time-based trend analysis.",
+        "Can you provide historical sales data analysis?",
+        "Show me trends in sales over different timeframes.",
+        "Analyze sales trends over various time periods.",
+        "What insights can you provide on sales trends over time?",
+        "Provide a historical analysis of sales trends.",
+        "I'm interested in seeing how sales have evolved over time.",
+        "Show me sales trends over different time intervals.",
+        "Analyze sales data over the past few years.",
+        "Can you provide a breakdown of sales by month?",
+        "Analyze sales data by quarter.",
+        "Can you provide historical sales data analysis?",
+        "Show me trends in sales over different timeframes.",
+        "Analyze sales trends over various time periods.",
+        "What insights can you provide on sales trends over time?",
+        "Provide a historical analysis of sales trends.",
+        "I'm interested in seeing how sales have evolved over time.",
+        "Show me sales trends over different time intervals.",
+        "Analyze sales data over the past few years.",
+        "Can you provide a breakdown of sales by month?",
+        "Show me a breakdown of sales by week for the past month.",
+        "Analyze sales trends on a daily basis for the past quarter",
+        "How have sales figures changed year-over-year?",
+        "Compare sales performance for {Product A} vs {Product B} over time."
       ],
       "responses": [
         "Sure! Let's analyze sales trends based on InvoiceDate.",
@@ -54,10 +141,33 @@
     },
     {
       "intent": "RevenueAnalysis",
-      "pattern": [
+      "patterns": [
         "Calculate revenue for a specific period.",
         "What is the total revenue generated?",
-        "Revenue analysis based on UnitPrice and Quantity."
+        "Revenue analysis based on UnitPrice and Quantity.",
+        "I need a detailed analysis of our revenue streams.",
+        "Analyze the factors contributing to our revenue.",
+        "Provide insights into our revenue generation sources.",
+        "What's the breakdown of revenue by product category?",
+        "I'm interested in revenue analysis by customer segment.",
+        "Analyze our revenue trends over the past year.",
+        "Show how revenue has changed over time.",
+        "Provide a breakdown of revenue sources for the past quarter.",
+        "Analyze revenue trends by geographic region.",
+        "Can you identify key drivers of revenue growth?",
+        "I need a detailed analysis of our revenue streams.",
+        "Analyze the factors contributing to our revenue.",
+        "Provide insights into our revenue generation sources.",
+        "What's the breakdown of revenue by product category?",
+        "I'm interested in revenue analysis by customer segment.",
+        "Analyze our revenue trends over the past year.",
+        "Show how revenue has changed over time.",
+        "Provide a breakdown of revenue sources for the past quarter.",
+        "Analyze revenue trends by geographic region.",
+        "What was the average order value for the past month?",
+        "Can you identify any customer segments driving the most revenue?",
+        "Analyze the profitability of different product categories.",
+        "Project future revenue based on current trends."
       ],
       "responses": [
         "Let me calculate the revenue for the specified period.",
@@ -67,10 +177,32 @@
     },
     {
       "intent": "GeographicalSegmentation",
-      "pattern": [
+      "patterns": [
         "Which countries are our customers from?",
         "Can you segment customers by Country?",
-        "Geographical analysis based on customer location."
+        "Geographical analysis based on customer location.",
+        "Analyze customer distribution by geographic location.",
+        "Show me customer demographics by region.",
+        "What geographic regions do our customers primarily come from?",
+        "Provide insights into customer segmentation geographically.",
+        "Analyze customer distribution by country.",
+        "Show me where our customers are located geographically.",
+        "Identify our customer base by region.",
+        "Analyze customer distribution by city.",
+        "What regions do our customers mainly come from?",
+        "Can you segment our customers by geographic location?",
+        "Analyze customer distribution by geographic location.",
+        "Show me customer demographics by region.",
+        "What geographic regions do our customers primarily come from?",
+        "Provide insights into customer segmentation geographically.",
+        "Analyze customer distribution by country.",
+        "Show me where our customers are located geographically.",
+        "Identify our customer base by region.",
+        "Analyze customer distribution by city.",
+        "In which countries has our customer base grown the most?",
+        "Compare customer acquisition rates by region.",
+        "Analyze purchase behavior patterns for customers in different locations.",
+        "Can you identify any emerging markets for our products?"
       ],
       "responses": [
         "Let's analyze which countries our customers are from.",
@@ -80,10 +212,22 @@
     },
     {
       "intent": "GenerateBarChart",
-      "pattern": [
+      "patterns": [
         "Can you generate a bar chart showing sales performance by region for the past quarter?",
         "Show me a bar chart of sales performance by region.",
-        "I'd like to see a bar chart of sales performance by region."
+        "I'd like to see a bar chart of sales performance by region.",
+        "Create a bar chart comparing sales performance across different regions.",
+        "Visualize sales performance using a bar chart.",
+        "Generate a bar chart showing sales by product category.",
+        "Show how sales vary by region using a bar chart.",
+        "Create a bar chart illustrating sales trends over time.",
+        "I need a bar chart comparing sales by quarter.",
+        "Generate a bar chart showing sales by department.",
+        "Create a bar chart comparing sales by channel.",
+        "Show sales performance by region in a bar chart.",
+        "Generate a bar chart comparing sales by product type.",
+        "Show me a pie chart illustrating revenue distribution by region.",
+        "Generate a heatmap depicting regional sales performance."
       ],
       "responses": [
         "Sure! I'll generate a bar chart showing sales performance by region for the past quarter.",
@@ -93,10 +237,22 @@
     },
     {
       "intent": "GenerateLineChart",
-      "pattern": [
+      "patterns": [
         "Can you provide a line chart illustrating the trend in inventory levels over the past year?",
         "Show me a line chart of inventory levels over the past year.",
-        "I need a line chart illustrating the trend in inventory levels."
+        "I need a line chart illustrating the trend in inventory levels.",
+        "Create a line chart showing sales trends over the past year.",
+        "Visualize sales trends using a line chart.",
+        "Generate a line chart illustrating revenue growth.",
+        "Show how sales have changed over time with a line chart.",
+        "Create a line chart comparing sales by product category.",
+        "Generate a line chart showing customer acquisition trends.",
+        "I need a line chart illustrating changes in market share.",
+        "Show me a line chart of quarterly sales performance.",
+        "Create a line chart illustrating changes in customer retention.",
+        "Generate a line chart showing changes in average order value.",
+        "Show me a pie chart illustrating revenue distribution by region.",
+        "Generate a heatmap depicting regional sales performance."
       ],
       "responses": [
         "Certainly! I'll provide a line chart illustrating the trend in inventory levels over the past year.",
@@ -106,10 +262,22 @@
     },
     {
       "intent": "GeneratePieChart",
-      "pattern": [
+      "patterns": [
         "I'd like to see a pie chart depicting the distribution of product categories in our inventory.",
         "Show me a pie chart of product category distribution in our inventory.",
-        "Can you provide a pie chart of product category distribution?"
+        "Can you provide a pie chart of product category distribution?",
+        "Create a pie chart showing product category distribution.",
+        "Visualize product category distribution using a pie chart.",
+        "Generate a pie chart illustrating market share.",
+        "Show me customer demographics using a pie chart.",
+        "Create a pie chart showing sales distribution by region.",
+        "I need a pie chart representing revenue sources.",
+        "Generate a pie chart showing customer segment distribution.",
+        "Show market share by product category using a pie chart.",
+        "Generate a pie chart showing sales distribution by channel.",
+        "Generate a pie chart illustrating customer loyalty.",
+        "Show me a line chart illustrating the trend in inventory levels over the past year.",
+        "Generate a line chart illustrating revenue growth."
       ],
       "responses": [
         "Of course! I'll generate a pie chart depicting the distribution of product categories in our inventory.",
@@ -119,10 +287,21 @@
     },
     {
       "intent": "GenerateScatterPlot",
-      "pattern": [
+      "patterns": [
         "Can you generate a scatter plot showing the correlation between shipping distance and delivery time?",
         "Show me a scatter plot of shipping distance versus delivery time.",
-        "I'd like to see a scatter plot of shipping distance and delivery time."
+        "I'd like to see a scatter plot of shipping distance and delivery time.",
+        "Create a scatter plot showing correlation between price and demand.",
+        "Visualize the relationship between advertising spend and sales using a scatter plot.",
+        "Generate a scatter plot showing customer age versus spending.",
+        "Show correlation between product price and customer satisfaction using a scatter plot.",
+        "I need a scatter plot illustrating correlation between website traffic and conversions.",
+        "Generate a scatter plot showing relationship between marketing efforts and sales.",
+        "Show correlation between product quality and customer reviews using a scatter plot.",
+        "Create a scatter plot showing correlation between inventory levels and sales.",
+        "Generate a scatter plot showing relationship between pricing strategy and revenue.",
+        "Generate a heatmap depicting regional sales performance.",
+        "Show distribution of customer complaints using a heatmap."
       ],
       "responses": [
         "Certainly! I'll generate a scatter plot showing the correlation between shipping distance and delivery time.",
@@ -132,10 +311,21 @@
     },
     {
       "intent": "GenerateHeatmap",
-      "pattern": [
+      "patterns": [
         "Can you provide a heatmap of customer satisfaction ratings by product category?",
         "Show me a heatmap of customer satisfaction ratings by product category.",
-        "I need a heatmap of customer satisfaction ratings."
+        "I need a heatmap of customer satisfaction ratings.",
+        "Create a heatmap of customer satisfaction ratings by product category.",
+        "Visualize customer satisfaction ratings using a heatmap.",
+        "Generate a heatmap showing product popularity by age group.",
+        "Show customer feedback by geographic location using a heatmap.",
+        "Create a heatmap showing customer engagement by time of day.",
+        "I need a heatmap illustrating website traffic by region.",
+        "Generate a heatmap showing correlation between product features and customer preferences.",
+        "Show distribution of customer complaints using a heatmap.",
+        "Create a heatmap illustrating product performance by season.",
+        "Generate a heatmap showing customer sentiment over time.",
+        "Generate a scatter plot of shipping distance versus delivery time."
       ],
       "responses": [
         "Sure! I'll provide a heatmap of customer satisfaction ratings by product category.",
@@ -145,10 +335,21 @@
     },
     {
       "intent": "GenerateHistogram",
-      "pattern": [
+      "patterns": [
         "I need a histogram showing the distribution of order values for the past month.",
         "Show me a histogram of order values for the past month.",
-        "Can you provide a histogram of order values?"
+        "Can you provide a histogram of order values?",
+        "Create a histogram showing frequency of purchases by product category.",
+        "Visualize the distribution of purchase amounts using a histogram.",
+        "Generate a histogram showing distribution of customer age.",
+        "Show distribution of shipping times using a histogram.",
+        "I need a histogram showing distribution of customer spending.",
+        "Generate a histogram showing distribution of customer ratings.",
+        "Show distribution of product prices using a histogram.",
+        "Create a histogram illustrating distribution of order sizes.",
+        "Generate a histogram showing distribution of website traffic.",
+        "Generate a heatmap depicting regional sales performance.",
+        "Show distribution of customer complaints using a heatmap."
       ],
       "responses": [
         "Of course! I'll provide a histogram showing the distribution of order values for the past month.",
@@ -158,3 +359,4 @@
     }
   ]
 }
+

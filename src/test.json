@@ -1,53 +1,135 @@
 {
-    "intents": [
-      {
-        "pattern": "Could you please provide the transaction details for InvoiceNo 536364?",
-        "intent": "GetTransactionDetails"
-      },
-      {
-        "pattern": "I'm curious about StockCode 22423. Can you tell me more about it?",
-        "intent": "SearchProduct"
-      },
-      {
-        "pattern": "Can you analyze the trends in customer preferences?",
-        "intent": "AnalysePurchaseTrends"
-      },
-      {
-        "pattern": "Perform an analysis of sales trends by month, please.",
-        "intent": "TimeBasedAnalysis"
-      },
-      {
-        "pattern": "What was the revenue for the last quarter?",
-        "intent": "RevenueAnalysis"
-      },
-      {
-        "pattern": "Could you segment customers by their regions?",
-        "intent": "GeographicalSegmentation"
-      },
-      {
-        "pattern": "I'd like to see a bar chart illustrating sales performance.",
-        "intent": "GenerateBarChart"
-      },
-      {
-        "pattern": "Show me the inventory levels over the past month.",
-        "intent": "GenerateLineChart"
-      },
-      {
-        "pattern": "Could you generate a pie chart showing product categories?",
-        "intent": "GeneratePieChart"
-      },
-      {
-        "pattern": "Could you plot shipping distance against delivery time?",
-        "intent": "GenerateScatterPlot"
-      },
-      {
-        "pattern": "Please provide a heatmap of customer satisfaction ratings.",
-        "intent": "GenerateHeatmap"
-      },
-      {
-        "pattern": "I'd like to see a histogram of order values for the past year.",
-        "intent": "GenerateHistogram"
-      }
-    ]
-  }
-  
+  "intents": [
+    {
+      "intent": "GetTransactionDetails",
+      "patterns": [
+        "What are the specifics for InvoiceNo 123456?",
+        "Can you provide information on InvoiceNo 123456?",
+        "Give me the details of transaction InvoiceNo 123456.",
+        "Details for InvoiceNo 123456, please?",
+        "How much was spent on InvoiceNo 123456?",
+        "I want to know more about InvoiceNo 123456.",
+        "Provide transaction details for InvoiceNo 123456.",
+        "Give me details about Transaction ID 123456."
+      ]
+    },
+    {
+      "intent": "SearchProduct",
+      "patterns": [
+        "Describe StockCode ABC123.",
+        "What is StockCode ABC123?",
+        "Details about StockCode ABC123, please?",
+        "Information on StockCode ABC123?",
+        "Can you provide details for StockCode ABC123?",
+        "I'm interested in StockCode ABC123.",
+        "What category does StockCode ABC123 belong to?",
+        "Are there any images available for StockCode ABC123?",
+        "What's the stock level for StockCode ABC123?"
+      ]
+    },
+    {
+      "intent": "AnalysePurchaseTrends",
+      "patterns": [
+        "Can you identify any recent purchasing patterns?",
+        "Analyze changes in customer buying habits.",
+        "Provide insights into fluctuations in sales data.",
+        "What trends are emerging in customer purchasing behavior?",
+        "Give me an overview of recent purchase trends.",
+        "I'd like to understand the current trends in sales.",
+        "What are the latest buying trends?",
+        "Analyze recent shifts in purchasing patterns.",
+        "What are the top-selling products for customers?"
+      ]
+    },
+    {
+      "intent": "TimeBasedAnalysis",
+      "patterns": [
+        "Can you analyze sales trends by month?",
+        "Show me trends based on InvoiceDate.",
+        "Analyze sales trends over various time periods.",
+        "Provide insights on sales trends over time.",
+        "I'm interested in seeing how sales have evolved over time.",
+        "Show me sales trends over different time intervals.",
+        "Analyze sales data over the past few years.",
+        "Show me a breakdown of sales by week."
+      ]
+    },
+    {
+      "intent": "RevenueAnalysis",
+      "patterns": [
+        "Calculate revenue for this quarter.",
+        "What is the total revenue generated?",
+        "Analyze the profitability of different product categories.",
+        "Show revenue trends over the past year.",
+        "Analyze revenue trends by geographic region.",
+        "What was the average order value for the past month?",
+        "Can you identify any customer segments driving revenue?"
+      ]
+    },
+    {
+      "intent": "GeographicalSegmentation",
+      "patterns": [
+        "Where are our customers located?",
+        "Can you segment customers by geographic location?",
+        "Show me customer demographics by region.",
+        "Analyze customer distribution by country.",
+        "Identify our customer base by region.",
+        "What regions do our customers mainly come from?",
+        "Can you segment our customers by geographic location?"
+      ]
+    },
+    {
+      "intent": "GenerateBarChart",
+      "patterns": [
+        "Can you generate a bar chart showing sales performance by region?",
+        "Create a bar chart illustrating sales trends over time.",
+        "Generate a bar chart comparing sales by product category.",
+        "Show sales performance by region in a bar chart.",
+        "Generate a bar chart showing sales by department."
+      ]
+    },
+    {
+      "intent": "GenerateLineChart",
+      "patterns": [
+        "Can you provide a line chart illustrating sales trends?",
+        "Create a line chart showing revenue growth.",
+        "Generate a line chart illustrating changes in customer retention.",
+        "Show me a line chart of quarterly sales performance."
+      ]
+    },
+    {
+      "intent": "GeneratePieChart",
+      "patterns": [
+        "I'd like to see a pie chart of product category distribution.",
+        "Show me a pie chart illustrating market share.",
+        "Generate a pie chart showing customer segment distribution.",
+        "Show market share by product category using a pie chart."
+      ]
+    },
+    {
+      "intent": "GenerateScatterPlot",
+      "patterns": [
+        "Can you generate a scatter plot showing customer age versus spending?",
+        "Generate a scatter plot showing relationship between marketing efforts and sales.",
+        "Create a scatter plot illustrating correlation between inventory levels and sales."
+      ]
+    },
+    {
+      "intent": "GenerateHeatmap",
+      "patterns": [
+        "Can you provide a heatmap of customer satisfaction ratings by product category?",
+        "Show me a heatmap of customer satisfaction ratings.",
+        "Create a heatmap showing customer engagement by time of day."
+      ]
+    },
+    {
+      "intent": "GenerateHistogram",
+      "patterns": [
+        "I need a histogram showing distribution of order values.",
+        "Show me a histogram of customer ratings.",
+        "Generate a histogram showing distribution of website traffic."
+      ]
+    }
+  ]
+}
+
