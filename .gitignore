@@ -160,8 +160,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-src/fingerprint.pb
-src/keras_metadata.pb
-src/saved_model.pb
-src/variables/
-src/assets/
+src/intent_model/
+src/ner_model/
+src/data/
