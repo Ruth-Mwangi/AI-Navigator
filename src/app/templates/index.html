@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataBot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="welcome-container" class="chat-container">
+        <div class="chat-header">
+            Welcome to the Databot
+        </div>
+        <div class="chat-messages" id="welcome-messages">
+            <p>Welcome to our chatbot service! Please log in to continue.</p>
+        </div>
+        <div class="chat-input">
+            <form id="login-form" onsubmit="login(event)">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="chat-container" class="chat-container" style="display:none;">
+        <div class="chat-header">
+            Databot
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be displayed here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        let token = '';
+
+        async function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/token', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `username=${username}&password=${password}`
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                token = data.access_token;
+                document.getElementById('welcome-container').style.display = 'none';
+                document.getElementById('chat-container').style.display = 'block';
+                const welcomeMessage = document.createElement('div');
+                welcomeMessage.textContent = `Welcome, ${username}!`;
+                document.getElementById('chat-messages').appendChild(welcomeMessage);
+            } else {
+                alert(data.detail);
+            }
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value;
+            if (userInput.trim() === '') return;
+
+            // Display user message
+            const userMessage = document.createElement('div');
+            userMessage.classList.add('user-message');
+            userMessage.textContent = userInput;
+            document.getElementById('chat-messages').appendChild(userMessage);
+
+            // Clear input field
+            document.getElementById('user-input').value = '';
+
+            // Send message to server
+            const response = await fetch('/get_response', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ text: userInput })
+            });
+
+            if (response.headers.get('content-type').includes('application/json')) {
+                const data = await response.json();
+
+                // Display bot response
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('bot-message');
+                botMessage.textContent = data.response;
+                document.getElementById('chat-messages').appendChild(botMessage);
+            } else if (response.headers.get('content-type').includes('image/png')) {
+                const blob = await response.blob();
+                const imgUrl = URL.createObjectURL(blob);
+
+                // Display bot image response
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('bot-message');
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                img.alt = 'Response Image';
+                img.style.maxWidth = '100%';  // Ensure the image fits within the chat container
+                botMessage.appendChild(img);
+                document.getElementById('chat-messages').appendChild(botMessage);
+            }
+        }
+
+
+    </script>
+</body>
+</html>
