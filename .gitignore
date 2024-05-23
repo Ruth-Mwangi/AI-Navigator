@@ -163,3 +163,8 @@ cython_debug/
 src/intent_model/
 src/ner_model/
 src/data/
+
+terraform/terraform.tfvars
+terraform/secrets.tfvars
+terraform/variables.tf
+terraform/.terraform/
