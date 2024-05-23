@@ -51,21 +51,36 @@ def query_table_with_cache():
     # Store the result in Redis cache with an expiration time of 15 minutes
     redis_client.setex(cache_key, timedelta(minutes=15), pickle.dumps(df))
     print("Queried data from MySQL and updated cache.")
-    return df
+    return 
 
-def GenerateScatterPlot(response:ClassificationResponse):
-    df=query_table_with_cache()
-    categories=[]
-    time=[]
-    numerical=[]
+def classify_entities(response):
+    categories = []
+    numerical = ["SALES"]
+    filter_map = {}
 
     for entity in response.entities:
         if entity.label in categorical_features:
             categories.append(entity.label)
         elif entity.label in numerical_features:
-                    numerical.append(entity.label)
+            numerical.append(entity.label)
         elif entity.label in time_features:
-                    time.append(entity.label)
+            pass  # You mentioned time features are not needed in this context
+        elif 'value' in entity.label.lower():
+            entity_label, value_part = entity.label.rsplit('_', 1)
+            if entity_label in filter_map:
+                filter_map[entity_label].append(entity.text)
+            else:
+                filter_map[entity_label] = [entity.text]
+
+    return categories, numerical, filter_map
+
+def GenerateScatterPlot(response:ClassificationResponse):
+    df=query_table_with_cache()
+    categories, numerical, filter_map = classify_entities(response)
+     
+    for key, values in filter_map.items():
+        pattern = '|'.join(values)  # Create a regex pattern for the values
+        df = df[df[key].str.contains(pattern, case=False, na=False)]
 
     # For this example, assume the scatter plot needs a numerical feature on x-axis and a categorical feature on y-axis
      # Default numerical features
@@ -105,19 +120,15 @@ def GenerateScatterPlot(response:ClassificationResponse):
 def GenerateBarChart(response:ClassificationResponse):
     df=query_table_with_cache()
     
+    
   # Initialize lists for categories, time, and numerical features
-    categories = []
-    time = []
-    numerical = ["SALES"]
+    categories, numerical, filter_map = classify_entities(response)
 
-    # Classify entities based on their labels
-    for entity in response.entities:
-        if entity.label in categorical_features:
-            categories.append(entity.label)
-        elif entity.label in numerical_features:
-            numerical.append(entity.label)
-        elif entity.label in time_features:
-            time.append(entity.label)
+     
+    for key, values in filter_map.items():
+        pattern = '|'.join(values)  # Create a regex pattern for the values
+        df = df[df[key].str.contains(pattern, case=False, na=False)]
+            
 
     # Ensure there is at least one categorical feature and one numerical feature
     if len(categories) < 1:
@@ -133,12 +144,23 @@ def GenerateBarChart(response:ClassificationResponse):
     if len(categories) > 1:
         grouped_df = grouped_df.unstack()
 
+    num_categories = len(categories)
+    # num_numerical_features = len(numerical)
+
+    # Calculate the figure size based on the number of categories and numerical features
+    # Adjust these factors based on your preferences
+    fig_width = 20
+    
+    fig_height = 10
+
     # Plotting
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+
 
     # Define bar width and positions
     bar_width = 0.2
     positions = np.arange(len(grouped_df))
+    
 
     # Plot bars for each numerical feature
     for i, numerical_feature in enumerate(numerical):
@@ -169,18 +191,13 @@ def GenerateBarChart(response:ClassificationResponse):
 
 def GeneratePieChart(response):
     df=query_table_with_cache()
-    categories = []
-    time = []
-    numerical = ["SALES"]
+    
+    categories, numerical, filter_map = classify_entities(response)
 
-    # Classify entities based on their labels
-    for entity in response.entities:
-        if entity.label in categorical_features:
-            categories.append(entity.label)
-        elif entity.label in numerical_features:
-            numerical.append(entity.label)
-        elif entity.label in time_features:
-            time.append(entity.label)
+     
+    for key, values in filter_map.items():
+        pattern = '|'.join(values)  # Create a regex pattern for the values
+        df = df[df[key].str.contains(pattern, case=False, na=False)]
 
     # Ensure there is at least one categorical feature and one numerical feature
     if len(categories) < 1:
