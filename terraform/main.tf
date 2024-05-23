@@ -27,11 +27,22 @@ output "mysql_connection_details" {
 
 output "access_token_details" {
   value = {
-    secret_key="Trinidad96"
-    algorithm= "HS256"
-    access_token_expire_minutes = 5
+    secret_key=var.access_token_key
+    algorithm= var.access_token_algorithm
+    access_token_expire_minutes = var.access_token_expire_minutes
   }
+}
 
+output "categorical_features" {
+  value = var.categorical_features
+}
+
+output "time_features" {
+  value = var.time_features
+}
+
+output "numerical_features" {
+  value = var.numerical_features
 }
 
 
