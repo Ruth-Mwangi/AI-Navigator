@@ -13,8 +13,8 @@ from typing import List, Tuple
 import sys
 import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
-src_path = os.path.join(current_dir, '../../')
-sys.path.append(src_path)
+static_path = os.path.join(current_dir,'static')
+templates_path = os.path.join(current_dir,'templates')
 
 from services.classify_service import classify_data_request
 from services.data_retrieval_service import GenerateBarChart, GeneratePieChart, GenerateScatterPlot
@@ -22,7 +22,7 @@ from models.sentence import Sentence
 from models.classification_response import ClassificationResponse
 from models.token import Token
 from models.user_in_db import UserInDB
-from services.authentication import fake_hash_password
+from services.authentication import authenticate_user, create_access_token, verify_token
 
 
 
@@ -37,19 +37,11 @@ intent_function_mapping = {
     # "GenerateHeatmap": GenerateHeatmap,
     # "GenerateHistogram": GenerateHistogram
 }
-fake_users_db = {
-    "Jane": {
-        "username": "Jane",
-        "full_name": "Jane Doe",
-        "email": "user@example.com",
-        "hashed_password": "fakehashedpassword",
-        "disabled": False,
-    }
-}
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-app.mount("/static", StaticFiles(directory="src/app/static"), name="static")
-templates = Jinja2Templates(directory="src/app/templates")
+app.mount("/static", StaticFiles(directory=static_path), name="static")
+templates = Jinja2Templates(directory=templates_path)
 
 @app.get("/", response_class=HTMLResponse)
 async def get(request: Request):
@@ -59,6 +51,10 @@ async def get(request: Request):
 
 @app.post("/data_request", response_model=ClassificationResponse)
 async def get_response(sentence_request: Sentence, token: str = Depends(oauth2_scheme)):
+    username = verify_token(token)
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
     sentence = sentence_request.text
     classification_response = classify_data_request(sentence)
     intent = classification_response.intent
@@ -75,18 +71,19 @@ async def get_response(sentence_request: Sentence, token: str = Depends(oauth2_s
 
 @app.post("/token", response_model=Token)
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user_dict = fake_users_db.get(form_data.username)
-    if not user_dict:
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    user = UserInDB(**user_dict)
-    hashed_password = fake_hash_password(form_data.password)
-    if not hashed_password == user.hashed_password:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
-    access_token = "fakejwttoken"  # Simplified token generation for demo
+    
+    access_token = create_access_token(user.username)
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/classify", response_model=ClassificationResponse)
 async def classify(sentence_request: Sentence, token: str = Depends(oauth2_scheme)):
+    username = verify_token(token)
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
     sentence = sentence_request.text
     classification_response = classify_data_request(sentence)
     intent = classification_response.intent

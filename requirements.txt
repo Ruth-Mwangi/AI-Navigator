@@ -91,6 +91,7 @@ mdurl==0.1.2
 mistune==3.0.2
 ml-dtypes==0.3.2
 murmurhash==1.0.10
+mysql-connector-python==8.4.0
 namex==0.0.8
 nbclient==0.10.0
 nbconvert==7.16.4
@@ -109,6 +110,7 @@ packaging==24.0
 pandas==2.2.2
 pandocfilters==1.5.1
 parso==0.8.4
+passlib==1.7.4
 pexpect==4.9.0
 pillow==10.3.0
 platformdirs==4.2.1
@@ -125,6 +127,7 @@ pycparser==2.22
 pydantic==2.7.1
 pydantic_core==2.18.2
 Pygments==2.18.0
+PyJWT==2.8.0
 pyparsing==3.1.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
