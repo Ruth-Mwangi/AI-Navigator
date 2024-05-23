@@ -16,8 +16,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 src_path = os.path.join(current_dir, '../../')
 sys.path.append(src_path)
 
-from app.services.classify_service import classify_data_request
-from app.services.data_retrieval_service import GenerateScatterPlot
+from services.classify_service import classify_data_request
+from services.data_retrieval_service import GenerateBarChart, GeneratePieChart, GenerateScatterPlot
 from models.sentence import Sentence
 from models.classification_response import ClassificationResponse
 from models.token import Token
@@ -30,17 +30,17 @@ from services.authentication import fake_hash_password
 app = FastAPI()
 
 intent_function_mapping = {
-    # "GenerateBarChart": GenerateBarChart,
+    "GenerateBarChart": GenerateBarChart,
     # "GenerateLineChart": GenerateLineChart,
-    # "GeneratePieChart": GeneratePieChart,
+    "GeneratePieChart": GeneratePieChart,
     "GenerateScatterPlot": GenerateScatterPlot,
     # "GenerateHeatmap": GenerateHeatmap,
     # "GenerateHistogram": GenerateHistogram
 }
 fake_users_db = {
-    "user": {
-        "username": "user",
-        "full_name": "John Doe",
+    "Jane": {
+        "username": "Jane",
+        "full_name": "Jane Doe",
         "email": "user@example.com",
         "hashed_password": "fakehashedpassword",
         "disabled": False,
@@ -48,23 +48,16 @@ fake_users_db = {
 }
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
-templates = Jinja2Templates(directory="app/templates")
+app.mount("/static", StaticFiles(directory="src/app/static"), name="static")
+templates = Jinja2Templates(directory="src/app/templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def get(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# @app.post("/get_response", response_class=JSONResponse)
-# async def get_response(message: str = Form(...)):
-#     # Here, you would process the user's message and generate a response
-#     # For now, let's just echo the message back
-#     response_message = f"You said: {message}"
-#     return {"response": response_message}
-# from fastapi.responses import JSONResponse
-# from app.models.classification_response import ClassificationResponse
 
-@app.post("/get_response", response_model=ClassificationResponse)
+
+@app.post("/data_request", response_model=ClassificationResponse)
 async def get_response(sentence_request: Sentence, token: str = Depends(oauth2_scheme)):
     sentence = sentence_request.text
     classification_response = classify_data_request(sentence)
