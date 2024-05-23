@@ -10,9 +10,9 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 # In-memory user store for simplicity
 fake_users_db = {
-    "user": {
-        "username": "user",
-        "full_name": "John Doe",
+    "Jane": {
+        "username": "Jane",
+        "full_name": "Jane Doe",
         "email": "user@example.com",
         "hashed_password": "fakehashedpassword",
         "disabled": False,

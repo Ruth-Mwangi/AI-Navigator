@@ -1,6 +1,7 @@
 import io
 import json
 from matplotlib import pyplot as plt
+import numpy as np
 import pandas as pd
 import sys
 import os
@@ -33,12 +34,7 @@ numerical_features=set([
   "SHIPPING_COST"
 ])
 
-# GenerateBarChart
-# GenerateLineChart
-# GeneratePieChart
-# GenerateScatterPlot
-# GenerateHeatmap
-# GenerateHistogram
+
 data = {
     "COUNTRY": ["Kenya", "Kenya", "USA", "USA", "Germany", "Germany", "India", "India"],
     "PRODUCT": ["Tshirt", "Shoes", "Dress", "Shoes", "Tshirt", "Shoes", "Tshirt", "Shoes"],
@@ -107,4 +103,113 @@ def GenerateScatterPlot(response:ClassificationResponse):
 
 
   
+def GenerateBarChart(response:ClassificationResponse):
+  # Initialize lists for categories, time, and numerical features
+    categories = []
+    time = []
+    numerical = ["SALES"]
 
+    # Classify entities based on their labels
+    for entity in response.entities:
+        if entity.label in categorical_features:
+            categories.append(entity.label)
+        elif entity.label in numerical_features:
+            numerical.append(entity.label)
+        elif entity.label in time_features:
+            time.append(entity.label)
+
+    # Ensure there is at least one categorical feature and one numerical feature
+    if len(categories) < 1:
+        raise ValueError("At least one categorical feature is required for grouping.")
+    # if len(numerical) < 1:
+    #     raise ValueError("At least one numerical feature is required for plotting.")
+
+    # Group data by the identified categorical features and sum the numerical feature
+    grouped_df = df.groupby(categories).sum()
+
+    # If there is more than one categorical feature, unstack the DataFrame
+    if len(categories) > 1:
+        grouped_df = grouped_df.unstack()
+
+    # Plotting
+    fig, ax = plt.subplots()
+
+    # Define bar width and positions
+    bar_width = 0.2
+    positions = np.arange(len(grouped_df))
+
+    # Plot bars for each numerical feature
+    for i, numerical_feature in enumerate(numerical):
+        if len(categories) > 1:
+            for j, category in enumerate(grouped_df[numerical_feature].columns):
+                ax.bar(positions + j * bar_width, grouped_df[numerical_feature][category], bar_width, label=f'{category} ({numerical_feature})')
+        else:
+            ax.bar(positions + i * bar_width, grouped_df[numerical_feature], bar_width, label=numerical_feature)
+
+    # Set the position of the x ticks
+    ax.set_xticks(positions + bar_width / 2)
+    ax.set_xticklabels(grouped_df.index)
+
+    # Set labels and title
+    plt.xlabel(categories[0] if len(categories) == 1 else ' & '.join(categories))
+    plt.ylabel('Value')
+    plt.title('Grouped Bar Chart')
+    plt.legend(title='Legend')
+
+    # Show plot
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close()
+    buf.seek(0)
+
+    return buf
+
+
+def GeneratePieChart(response):
+    categories = []
+    time = []
+    numerical = ["SALES"]
+
+    # Define the feature sets
+    categorical_features = ["COUNTRY", "REGION", "CATEGORY"]
+    numerical_features = ["SALES", "PROFIT", "REVENUE"]
+    time_features = ["DATE", "TIME", "YEAR"]
+
+    # Classify entities based on their labels
+    for entity in response.entities:
+        if entity.label in categorical_features:
+            categories.append(entity.label)
+        elif entity.label in numerical_features:
+            numerical.append(entity.label)
+        elif entity.label in time_features:
+            time.append(entity.label)
+
+    # Ensure there is at least one categorical feature and one numerical feature
+    if len(categories) < 1:
+        raise ValueError("At least one categorical feature is required for grouping.")
+    elif len(categories) != 1:
+        raise ValueError("Only one categorical feature is required for a pie chart.")
+
+    # Group by the categorical feature and sum the numerical values
+    grouped_df = df.groupby(categories).sum().reset_index()
+
+    # Extract labels and values for the pie chart
+    labels = grouped_df[categories[0]]
+    values = grouped_df["SALES"]
+
+    # Create the pie chart with increased size
+    fig, ax = plt.subplots(figsize=(10, 7))  # Adjust figsize as needed
+    wedges, texts, autotexts = ax.pie(values, labels=labels, autopct='%1.1f%%')
+
+    plt.title(f'Pie Chart of Sales by {categories[0]}')
+
+    # Place the legend outside the pie chart
+    ax.legend(wedges, labels, title=categories[0], loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+
+    # Save the plot to a buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png', bbox_inches='tight')
+    plt.close()
+    buf.seek(0)
+
+    return buf

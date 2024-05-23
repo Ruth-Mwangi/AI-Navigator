@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataBot</title>
     <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            display: none; /* Hidden by default */
+            margin: 10px auto; /* Center loader */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
     <div id="welcome-container" class="chat-container">
@@ -35,6 +52,8 @@
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
+
+    <div class="loader" id="loader"></div>
 
     <script>
         let token = '';
@@ -78,41 +97,49 @@
             // Clear input field
             document.getElementById('user-input').value = '';
 
+            // Show loader
+            document.getElementById('loader').style.display = 'block';
+
             // Send message to server
-            const response = await fetch('/get_response', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ text: userInput })
-            });
+            try {
+                const response = await fetch('/data_request', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ text: userInput })
+                });
 
-            if (response.headers.get('content-type').includes('application/json')) {
-                const data = await response.json();
+                if (response.headers.get('content-type').includes('application/json')) {
+                    const data = await response.json();
 
-                // Display bot response
-                const botMessage = document.createElement('div');
-                botMessage.classList.add('bot-message');
-                botMessage.textContent = data.response;
-                document.getElementById('chat-messages').appendChild(botMessage);
-            } else if (response.headers.get('content-type').includes('image/png')) {
-                const blob = await response.blob();
-                const imgUrl = URL.createObjectURL(blob);
+                    // Display bot response
+                    const botMessage = document.createElement('div');
+                    botMessage.classList.add('bot-message');
+                    botMessage.textContent = data.response;
+                    document.getElementById('chat-messages').appendChild(botMessage);
+                } else if (response.headers.get('content-type').includes('image/png')) {
+                    const blob = await response.blob();
+                    const imgUrl = URL.createObjectURL(blob);
 
-                // Display bot image response
-                const botMessage = document.createElement('div');
-                botMessage.classList.add('bot-message');
-                const img = document.createElement('img');
-                img.src = imgUrl;
-                img.alt = 'Response Image';
-                img.style.maxWidth = '100%';  // Ensure the image fits within the chat container
-                botMessage.appendChild(img);
-                document.getElementById('chat-messages').appendChild(botMessage);
+                    // Display bot image response
+                    const botMessage = document.createElement('div');
+                    botMessage.classList.add('bot-message');
+                    const img = document.createElement('img');
+                    img.src = imgUrl;
+                    img.alt = 'Response Image';
+                    img.style.maxWidth = '100%';  // Ensure the image fits within the chat container
+                    botMessage.appendChild(img);
+                    document.getElementById('chat-messages').appendChild(botMessage);
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+            } finally {
+                // Hide loader
+                document.getElementById('loader').style.display = 'none';
             }
         }
-
-
     </script>
 </body>
 </html>
