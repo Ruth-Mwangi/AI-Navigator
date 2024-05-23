@@ -168,3 +168,6 @@ terraform/terraform.tfvars
 terraform/secrets.tfvars
 terraform/variables.tf
 terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
