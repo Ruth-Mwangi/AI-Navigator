@@ -32,6 +32,17 @@ def get_jwt_details():
     else:
         print("Failed to retrieve Terraform output.")
 
+def get_data_features(feature):
+    output = get_terraform_output()
+    if output:
+        features = output.get(feature, {}).get("value", {})
+        if features:
+            return features
+        else:
+            print("Failed to retrieve details.")
+    else:
+        print("Failed to retrieve Terraform output.")
+
 
 
 def create_mysql_connection():

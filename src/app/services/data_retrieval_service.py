@@ -1,58 +1,66 @@
+from datetime import timedelta
 import io
 import json
+import pickle
 from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 import sys
 import os
+
+import redis
+
+from app.utils.util import create_mysql_connection, get_data_features
 current_dir = os.path.dirname(os.path.abspath(__file__))
 src_path = os.path.join(current_dir, '../../')
 sys.path.append(src_path)
 
 from app.models.classification_response import ClassificationResponse
 
-categorical_features = set([
-  "AGE",
-  "GENDER",
-  "DEVICE_TYPE",
-  "CUSTOMER_LOGIN_TYPE",
-  "PRODUCT_CATEGORY",
-  "PRODUCT",
-  "ORDER_PRIORITY",
-  "PAYMENT_METHOD",
-  "COUNTRY"
-])
-time_features=set([
-  "ORDER_DATE"
-])
+categorical_features = set(get_data_features('categorical_features'))
+time_features=set(get_data_features('time_features'))
 
-numerical_features=set([
-  "SALES",
-  "QUANTITY",
-  "DISCOUNT",
-  "PROFIT",
-  "SHIPPING_COST"
-])
+numerical_features=set(get_data_features('numerical_features'))
 
 
-data = {
-    "COUNTRY": ["Kenya", "Kenya", "USA", "USA", "Germany", "Germany", "India", "India"],
-    "PRODUCT": ["Tshirt", "Shoes", "Dress", "Shoes", "Tshirt", "Shoes", "Tshirt", "Shoes"],
-    "SALES": [150, 200, 300, 250, 180, 220, 260, 210],
-    "QUANTITY": [500, 700, 1200, 950, 600, 750, 1100, 800]
-}
-
-# Create DataFrame
-df = pd.DataFrame(data)
+try:
+    redis_client = redis.StrictRedis(host='localhost', port=6379, db=0)
+    redis_client.ping()  # Test connection
+except redis.ConnectionError:
+    print("Failed to connect to Redis. Ensure Redis is running on localhost:6379.")
+    redis_client = None
+def query_table_with_cache():
+    cache_key = f"table_cache:'transactions'"
+    
+    # Check if the table data is in Redis cache
+    cached_data = redis_client.get(cache_key)
+    if cached_data:
+        print("Using cached data.")
+        return pickle.loads(cached_data)
+    
+    # If cache is not valid, query the table
+    conn=create_mysql_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = f"SELECT * FROM transactions"
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    # Convert to pandas DataFrame
+    df = pd.DataFrame(data)
+    
+    # Store the result in Redis cache with an expiration time of 15 minutes
+    redis_client.setex(cache_key, timedelta(minutes=15), pickle.dumps(df))
+    print("Queried data from MySQL and updated cache.")
+    return df
 
 def GenerateScatterPlot(response:ClassificationResponse):
+    df=query_table_with_cache()
     categories=[]
     time=[]
     numerical=[]
 
     for entity in response.entities:
         if entity.label in categorical_features:
-            print(entity.label)
             categories.append(entity.label)
         elif entity.label in numerical_features:
                     numerical.append(entity.label)
@@ -68,12 +76,6 @@ def GenerateScatterPlot(response:ClassificationResponse):
         raise ValueError("Need at least one categorical feature for scatter plot.")
 
     plt.figure(figsize=(10, 6))
-    # for category in categories:
-    #     if category in df.columns:  # Check if the category is in the DataFrame columns
-    #         unique_values = df[category].unique()
-    #         for unique_value in unique_values:
-    #             subset = df[df[category] == unique_value]
-    #             plt.scatter(subset[x_feature], subset[y_feature], label=f"{category}: {unique_value}")
 
     first_category = categories[0]
     unique_values = df[first_category].unique()
@@ -90,10 +92,7 @@ def GenerateScatterPlot(response:ClassificationResponse):
     plt.ylabel(y_feature)
     plt.title(f'Scatter Plot of {x_feature} vs {y_feature} by {", ".join(categories)}')
     plt.legend(title=first_category)
-    # for i in range(df.shape[0]):
-    #     plt.annotate(f"{df['COUNTRY'][i]}: {df['PRODUCT'][i]}", (df['SALES'][i], df['QUANTITY'][i]))
-    # plt.show()
-    # Save the plot to a BytesIO buffer
+   
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
     plt.close()
@@ -104,6 +103,8 @@ def GenerateScatterPlot(response:ClassificationResponse):
 
   
 def GenerateBarChart(response:ClassificationResponse):
+    df=query_table_with_cache()
+    
   # Initialize lists for categories, time, and numerical features
     categories = []
     time = []
@@ -123,7 +124,8 @@ def GenerateBarChart(response:ClassificationResponse):
         raise ValueError("At least one categorical feature is required for grouping.")
     # if len(numerical) < 1:
     #     raise ValueError("At least one numerical feature is required for plotting.")
-
+   
+    df = df.drop(columns=time_features)
     # Group data by the identified categorical features and sum the numerical feature
     grouped_df = df.groupby(categories).sum()
 
@@ -166,14 +168,10 @@ def GenerateBarChart(response:ClassificationResponse):
 
 
 def GeneratePieChart(response):
+    df=query_table_with_cache()
     categories = []
     time = []
     numerical = ["SALES"]
-
-    # Define the feature sets
-    categorical_features = ["COUNTRY", "REGION", "CATEGORY"]
-    numerical_features = ["SALES", "PROFIT", "REVENUE"]
-    time_features = ["DATE", "TIME", "YEAR"]
 
     # Classify entities based on their labels
     for entity in response.entities:
@@ -190,6 +188,7 @@ def GeneratePieChart(response):
     elif len(categories) != 1:
         raise ValueError("Only one categorical feature is required for a pie chart.")
 
+    df = df.drop(columns=time_features)
     # Group by the categorical feature and sum the numerical values
     grouped_df = df.groupby(categories).sum().reset_index()
 
