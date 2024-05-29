@@ -16,6 +16,9 @@ src_path = os.path.join(current_dir, '../../')
 sys.path.append(src_path)
 
 from app.models.classification_response import ClassificationResponse
+import plotly.graph_objects as go
+import plotly.io as pio
+import io
 
 categorical_features = set(get_data_features('categorical_features'))
 time_features=set(get_data_features('time_features'))
@@ -35,7 +38,6 @@ def query_table_with_cache():
     # Check if the table data is in Redis cache
     cached_data = redis_client.get(cache_key)
     if cached_data:
-        print("Using cached data.")
         return pickle.loads(cached_data)
     
     # If cache is not valid, query the table
@@ -50,12 +52,13 @@ def query_table_with_cache():
     
     # Store the result in Redis cache with an expiration time of 15 minutes
     redis_client.setex(cache_key, timedelta(minutes=15), pickle.dumps(df))
-    print("Queried data from MySQL and updated cache.")
-    return 
+    cached_data = redis_client.get(cache_key)
+   
+    return pickle.loads(cached_data) 
 
 def classify_entities(response):
     categories = []
-    numerical = ["SALES"]
+    numerical = []
     filter_map = {}
 
     for entity in response.entities:
@@ -66,77 +69,83 @@ def classify_entities(response):
         elif entity.label in time_features:
             pass  # You mentioned time features are not needed in this context
         elif 'value' in entity.label.lower():
-            entity_label, value_part = entity.label.rsplit('_', 1)
+            entity_label, value_part = entity.label.rsplit("_", 1)
             if entity_label in filter_map:
                 filter_map[entity_label].append(entity.text)
             else:
                 filter_map[entity_label] = [entity.text]
+    if len(numerical)==0:
+        numerical = ["SALES"]
 
     return categories, numerical, filter_map
 
-def GenerateScatterPlot(response:ClassificationResponse):
-    df=query_table_with_cache()
+import plotly.graph_objects as go
+
+def GenerateScatterPlot(response: ClassificationResponse):
+    df = query_table_with_cache()
     categories, numerical, filter_map = classify_entities(response)
-     
+
     for key, values in filter_map.items():
         pattern = '|'.join(values)  # Create a regex pattern for the values
         df = df[df[key].str.contains(pattern, case=False, na=False)]
 
-    # For this example, assume the scatter plot needs a numerical feature on x-axis and a categorical feature on y-axis
-     # Default numerical features
-    x_feature = "SALES"
-    y_feature = "QUANTITY"
-
-    if len(categories) == 0:
+    if len(categories) < 1:
         raise ValueError("Need at least one categorical feature for scatter plot.")
+    if len(numerical) != 2:
+        raise ValueError("Need two numerical features (sales, discount, order sizes) for scatter plot.")
 
-    plt.figure(figsize=(10, 6))
+    x_feature = numerical[0]
+    y_feature = numerical[1]
 
-    first_category = categories[0]
-    unique_values = df[first_category].unique()
-    for unique_value in unique_values:
-        subset = df[df[first_category] == unique_value]
-        plt.scatter(subset[x_feature], subset[y_feature], label=unique_value)
+    fig = go.Figure()
+    df=df.sample(n=2000)
 
-    # Annotate each point with the other categories
-    for category in categories[1:]:
-        for i in range(df.shape[0]):
-            plt.annotate(f"{df[category][i]}: {df[first_category][i]}", (df[x_feature][i], df[y_feature][i]))
+    for category_value in df[categories[0]].unique():
+        subset = df[df[categories[0]] == category_value]
+        fig.add_trace(go.Scatter(
+            x=subset[x_feature],
+            y=subset[y_feature],
+            mode='markers',
+            name=str(category_value)
+        ))
 
-    plt.xlabel(x_feature)
-    plt.ylabel(y_feature)
-    plt.title(f'Scatter Plot of {x_feature} vs {y_feature} by {", ".join(categories)}')
-    plt.legend(title=first_category)
-   
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    plt.close()
-    buf.seek(0)
+    fig.update_layout(
+        title=f'Scatter Plot of {x_feature} vs {y_feature} by {", ".join(categories)}',
+        xaxis_title=x_feature,
+        yaxis_title=y_feature,
+        legend_title=categories[0].replace("_"," "),
+        legend=dict( x=1, y=0.5, traceorder="normal", font=dict(family="Arial, sans-serif")),
+        autosize=True,  # Automatically adjust the chart size to fit its contents
+        width=1200
+    )
 
-    return buf
+    # Format y-axis ticks to display in thousands
+    fig.update_yaxes(tickformat=",.0f", tickprefix="$")
+
+    # Return the Plotly figure as HTML
+    return fig.to_html(full_html=False)
+
 
 
   
-def GenerateBarChart(response:ClassificationResponse):
-    df=query_table_with_cache()
-    
-    
-  # Initialize lists for categories, time, and numerical features
+def GenerateBarChart(response: ClassificationResponse):
+    df = query_table_with_cache()
+
+    # Initialize lists for categories, time, and numerical features
     categories, numerical, filter_map = classify_entities(response)
 
-     
     for key, values in filter_map.items():
         pattern = '|'.join(values)  # Create a regex pattern for the values
         df = df[df[key].str.contains(pattern, case=False, na=False)]
-            
 
     # Ensure there is at least one categorical feature and one numerical feature
     if len(categories) < 1:
         raise ValueError("At least one categorical feature is required for grouping.")
-    # if len(numerical) < 1:
-    #     raise ValueError("At least one numerical feature is required for plotting.")
-   
+    if len(numerical) < 1:
+        raise ValueError("At least one numerical feature is required for plotting.")
+
     df = df.drop(columns=time_features)
+
     # Group data by the identified categorical features and sum the numerical feature
     grouped_df = df.groupby(categories).sum()
 
@@ -144,57 +153,55 @@ def GenerateBarChart(response:ClassificationResponse):
     if len(categories) > 1:
         grouped_df = grouped_df.unstack()
 
-    num_categories = len(categories)
-    # num_numerical_features = len(numerical)
+    # Create Plotly figure
+    fig = go.Figure()
 
-    # Calculate the figure size based on the number of categories and numerical features
-    # Adjust these factors based on your preferences
-    fig_width = 20
-    
-    fig_height = 10
+    # Add bars for each numerical feature
+    if len(categories) > 1:
+        for numerical_feature in numerical:
+            for category in grouped_df[numerical_feature].columns:
+                fig.add_trace(go.Bar(
+                    x=grouped_df.index,
+                    y=grouped_df[numerical_feature][category],
+                    name=f'{numerical_feature} - {category}'
+                ))
+    else:
+        for numerical_feature in numerical:
+            fig.add_trace(go.Bar(
+                x=grouped_df.index,
+                y=grouped_df[numerical_feature],
+                name=numerical_feature
+            ))
 
-    # Plotting
-    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+    # Update layout for scrollable plot
+    fig.update_layout(
+        xaxis={'categoryorder':'total descending'},
+        xaxis_title=categories[0].replace("_"," ") if len(categories) == 1 else ' & '.join(categories).replace("_"," "),
+        yaxis_title=numerical[0],
+        title=f'Bar Chart of {numerical[0].replace("_"," ")} by {", ".join(categories).replace("_"," ")}',
+        barmode='group',
+        bargap=0.15,
+        bargroupgap=0.1,
+        xaxis_tickangle=-45,
+        width=1200 + len(grouped_df) * 15,  # Adjust width dynamically based on the number of categories
+        height=600,
+        font=dict(family="Arial, sans-serif"),
+        legend=dict( x=1, y=0.5, traceorder="normal", font=dict(family="Arial, sans-serif")),
+        
 
+    )
 
-    # Define bar width and positions
-    bar_width = 0.2
-    positions = np.arange(len(grouped_df))
-    
+    graph_html = pio.to_html(fig, full_html=False)
 
-    # Plot bars for each numerical feature
-    for i, numerical_feature in enumerate(numerical):
-        if len(categories) > 1:
-            for j, category in enumerate(grouped_df[numerical_feature].columns):
-                ax.bar(positions + j * bar_width, grouped_df[numerical_feature][category], bar_width, label=f'{category} ({numerical_feature})')
-        else:
-            ax.bar(positions + i * bar_width, grouped_df[numerical_feature], bar_width, label=numerical_feature)
+    return graph_html
 
-    # Set the position of the x ticks
-    ax.set_xticks(positions + bar_width / 2)
-    ax.set_xticklabels(grouped_df.index)
-
-    # Set labels and title
-    plt.xlabel(categories[0] if len(categories) == 1 else ' & '.join(categories))
-    plt.ylabel('Value')
-    plt.title('Grouped Bar Chart')
-    plt.legend(title='Legend')
-
-    # Show plot
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png')
-    plt.close()
-    buf.seek(0)
-
-    return buf
 
 
 def GeneratePieChart(response):
-    df=query_table_with_cache()
+    df = query_table_with_cache()
     
     categories, numerical, filter_map = classify_entities(response)
-
-     
+    
     for key, values in filter_map.items():
         pattern = '|'.join(values)  # Create a regex pattern for the values
         df = df[df[key].str.contains(pattern, case=False, na=False)]
@@ -202,30 +209,29 @@ def GeneratePieChart(response):
     # Ensure there is at least one categorical feature and one numerical feature
     if len(categories) < 1:
         raise ValueError("At least one categorical feature is required for grouping.")
-    elif len(categories) != 1:
+    elif len(categories) > 1:
         raise ValueError("Only one categorical feature is required for a pie chart.")
 
     df = df.drop(columns=time_features)
+    
     # Group by the categorical feature and sum the numerical values
     grouped_df = df.groupby(categories).sum().reset_index()
 
     # Extract labels and values for the pie chart
-    labels = grouped_df[categories[0]]
-    values = grouped_df["SALES"]
+    labels = grouped_df[categories[0].replace("_"," ")]
+    values = grouped_df[numerical[0]]
 
-    # Create the pie chart with increased size
-    fig, ax = plt.subplots(figsize=(10, 7))  # Adjust figsize as needed
-    wedges, texts, autotexts = ax.pie(values, labels=labels, autopct='%1.1f%%')
+    # Create the pie chart
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, textinfo='percent')])
 
-    plt.title(f'Pie Chart of Sales by {categories[0]}')
+    # Update layout
+    fig.update_layout(
+        title=f'Pie Chart of {numerical[0].replace("_", " ")} by {categories[0].replace("_", " ")}',
+        legend=dict(title=categories[0], x=1, y=0.5, traceorder="normal", font=dict(family="Arial, sans-serif")),
+        font=dict(family="Arial, sans-serif"),
+        autosize=False,  # Disable autosizing
+        # width=400  # Set the width of the chart to 400 pixels (adjust as needed)
+    )
 
-    # Place the legend outside the pie chart
-    ax.legend(wedges, labels, title=categories[0], loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
-
-    # Save the plot to a buffer
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight')
-    plt.close()
-    buf.seek(0)
-
-    return buf
+    # Convert the plot to HTML and return
+    return fig.to_html(full_html=False)

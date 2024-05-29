@@ -6,7 +6,15 @@ import mysql.connector
 
 def get_terraform_output():
     try:
-        terraform_dir="/home/wangui/Documents/projects/AI-Navigator/terraform"
+        # Get the current directory of the script
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+
+        # Navigate up to the project root directory
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(current_directory)))
+
+        # Construct the path to the terraform directory
+        
+        terraform_dir = os.path.join(project_root, 'terraform')
 
         os.chdir(terraform_dir)
         # Run terraform output command and capture the result

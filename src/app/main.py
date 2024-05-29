@@ -1,4 +1,7 @@
-from fastapi import FastAPI, Form, HTTPException, Depends, Request
+import logging
+import ssl
+import time
+from fastapi import FastAPI, Form, HTTPException, Depends, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.staticfiles import StaticFiles
@@ -25,9 +28,21 @@ from models.user_in_db import UserInDB
 from services.authentication import authenticate_user, create_access_token, verify_token
 
 
+ner_model_path = os.path.join(current_dir, "../data/ner_model/model-best")
+intent_model_path = os.path.join(current_dir, "../data/intent_model")
+label_pickle_path = os.path.join(current_dir, "../data/intent_model/label_binarizer.pkl")
 
 # Initialize FastAPI app
 app = FastAPI()
+
+# Load the trained intent classifier model
+intent_classifier = tf.keras.models.load_model(intent_model_path)
+
+# Load the trained NER model
+ner_model = spacy.load(ner_model_path)
+
+with open(label_pickle_path, 'rb') as file:
+    binarizer = pickle.load(file)
 
 intent_function_mapping = {
     "GenerateBarChart": GenerateBarChart,
@@ -37,7 +52,7 @@ intent_function_mapping = {
     # "GenerateHeatmap": GenerateHeatmap,
     # "GenerateHistogram": GenerateHistogram
 }
-
+logger = logging.getLogger(__name__)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 app.mount("/static", StaticFiles(directory=static_path), name="static")
@@ -49,56 +64,59 @@ async def get(request: Request):
 
 
 
-@app.post("/data_request", response_model=ClassificationResponse)
+@app.post("/data_request")
 async def get_response(sentence_request: Sentence, token: str = Depends(oauth2_scheme)):
+   
     username = verify_token(token)
     if not username:
         raise HTTPException(status_code=401, detail="Invalid token")
+        
 
     sentence = sentence_request.text
-    classification_response = classify_data_request(sentence)
+    classification_response = classify_data_request(sentence,intent_classifier,ner_model,binarizer)
+
     intent = classification_response.intent
-    buf = None
+    html_content = None
     if intent in intent_function_mapping:
-        buf = intent_function_mapping[intent](classification_response)
+        html_content = intent_function_mapping[intent](classification_response)
     else:
         print(f"No function mapped for intent: {intent}")
 
-    if buf:
-        return StreamingResponse(buf, media_type="image/png")
+    if html_content:
+        return HTMLResponse(content=html_content)
     else:
-        return classification_response
+        return None
+    
+    
 
 @app.post("/token", response_model=Token)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(response:Response,form_data: OAuth2PasswordRequestForm = Depends()):
     user = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    
+
     access_token = create_access_token(user.username)
+    response.set_cookie(
+        key="authToken",
+        value=access_token,
+        httponly=True,
+        secure=True,
+        samesite="Strict",
+        max_age=10800  # 3 hours in seconds
+    )
+    
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.post("/classify", response_model=ClassificationResponse)
-async def classify(sentence_request: Sentence, token: str = Depends(oauth2_scheme)):
-    username = verify_token(token)
-    if not username:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
-    sentence = sentence_request.text
-    classification_response = classify_data_request(sentence)
-    intent = classification_response.intent
-    buf = None
-    if intent in intent_function_mapping:
-        buf = intent_function_mapping[intent](classification_response)
-    else:
-        print(f"No function mapped for intent: {intent}")
-
-    if buf:
-        return StreamingResponse(buf, media_type="image/png")
-    else:
-        return classification_response
-    # return classification_response
+@app.get("/get-token")
+async def get_token(request: Request):
+    token = None
+    cookies = request.cookies
+    if "authToken" in cookies:
+        token = cookies["authToken"]
+    return {"token": token}
 
 if __name__ == '__main__':
     import uvicorn
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+   
+    uvicorn.run(app, host='0.0.0.0', port=8443, ssl_keyfile="/etc/ssl/certs/analyticbot.app.key", ssl_certfile="/etc/ssl/certs/2b786b81d4a14162.pem")
