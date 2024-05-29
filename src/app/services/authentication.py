@@ -141,3 +141,9 @@ def verify_token(token: str) -> str:
         return None
     except jwt.PyJWKError:
         return None
+    except jwt.ExpiredSignatureError:
+        # Handle expired token error
+        return None
+    except Exception as e:
+        # Log other exceptions for debugging purposes
+        return None

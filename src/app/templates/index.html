@@ -3,60 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataBot</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>AnalyticBot</title>
+    <link rel="icon" type="image/png" href="/static/DataBot.png">
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <style>
-        .loader {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-            display: none; /* Hidden by default */
-            margin: 10px auto; /* Center loader */
+        /* Change the color of the scrollbar track */
+        ::-webkit-scrollbar {
+          background-color: #082F49; /* Change this to your desired background color */
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Change the color of the scrollbar thumb */
+        ::-webkit-scrollbar-thumb {
+          background-color: rgba(67,129,162,0.75); /* Change this to your desired thumb color */
         }
     </style>
 </head>
-<body>
-    <div id="welcome-container" class="chat-container">
-        <div class="chat-header">
-            Welcome to the Databot
+<body class="bg-sky-950 text-sky-900 h-screen flex items-center justify-center font-inter">
+    <div id="welcome-container" class="flex  flex-col items-center justify-center h-full w-full max-w-full overflow-hidden">
+        <div class="bg-sky-300  bg-opacity-50 text-sky-50 p-4 text-center text-xl font-bold rounded-lg mb-4">
+             AnalyticBot
         </div>
-        <div class="chat-messages" id="welcome-messages">
-            <p>Welcome to our chatbot service! Please log in to continue.</p>
+        <div class="text-sky-50 p-4 rounded-lg mb-4 text-center">
+            <p>Welcome to AnalyticBot! Please log in to continue. <br> Use the following credentials:</p>
+            <p><strong>Username:</strong> test user</p>
+            <p><strong>Password:</strong> password</p>
         </div>
-        <div class="chat-input">
-            <form id="login-form" onsubmit="login(event)">
-                <input type="text" id="username" placeholder="Username" required>
-                <input type="password" id="password" placeholder="Password" required>
-                <button type="submit">Login</button>
+        <div class="w-full max-w-sm">
+            <form id="login-form" onsubmit="login(event)" class="flex flex-col space-y-4">
+                <input type="text" id="username" placeholder="Username" required class="p-2 rounded border border-sky-400 bg-white text-sky-900">
+                <input type="password" id="password" placeholder="Password" required class="p-2 rounded border border-sky-400 bg-white text-sky-900">
+                <button type="submit" class="p-2 rounded bg-sky-700 text-white hover:bg-sky-300 hover:text-black">Login</button>
             </form>
         </div>
     </div>
 
-    <div id="chat-container" class="chat-container" style="display:none;">
-        <div class="chat-header">
-            Databot
+    <div id="chat-container" class="flex flex-col h-screen w-screen bg-sky-950  justify-center items-center" style="display:none;">
+        <div class=" text-sky-50 p-2  text-xl font-bold rounded-lg mb-2">
+            AnalyticBot
         </div>
-        <div class="chat-messages" id="chat-messages">
-            <!-- Messages will be displayed here -->
+        <div id="chat-messages" class="flex-1 p-2 overflow-y-auto relative w-full container ">
+            <div id="spinner" role="status" class="hidden absolute bottom-0 left-1/2 transform -translate-x-1/2 flex items-center justify-center text-sky-900">
+                <svg aria-hidden="true" class="inline w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-sky-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                </svg>
+                <span class="sr-only">Loading...</span>
+            </div>
         </div>
-        <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Type a message...">
-            <button onclick="sendMessage()">Send</button>
+        <div class="p-4 flex w-full justify-center items-center container">
+            
+                <input type="text" id="user-input" placeholder="Type a message..." class="flex-1 p-2 rounded-md border-t border-l border-b border-sky-400 bg-white text-sky-900">
+                <button onclick="sendMessage()" class="p-2 ml-1 rounded-md bg-sky-700 text-white hover:bg-sky-300 hover:text-black w-56">Send Message</button>
+            
         </div>
     </div>
 
-    <div class="loader" id="loader"></div>
-
     <script>
-        let token = '';
+        // let token = '';
 
         async function login(event) {
             event.preventDefault();
@@ -73,12 +78,59 @@
 
             const data = await response.json();
             if (response.ok) {
-                token = data.access_token;
+                // const token = data.access_token;
+                // const expires = new Date();
+                // expires.setTime(expires.getTime() + (3 * 60 * 60 * 1000)); // 3 hours in milliseconds
+                // document.cookie = `authToken=${token}; Secure; HttpOnly; SameSite=Strict; Path=/; Expires=${expires.toUTCString()}`;
                 document.getElementById('welcome-container').style.display = 'none';
-                document.getElementById('chat-container').style.display = 'block';
+                document.getElementById('chat-container').style.display = 'flex';
                 const welcomeMessage = document.createElement('div');
-                welcomeMessage.textContent = `Welcome, ${username}!`;
+                welcomeMessage.classList.add('welcome-message', 'bg-sky-200', 'text-sky-50', 'p-4', 'rounded-lg', 'mb-4',  'bg-opacity-25','justify-center','flex','flex-col','items-center');
+                // welcomeMessage.style.height = "fit-content";
+                // welcomeMessage.style.width = "fit-content";
+                welcomeMessage.innerHTML = `
+                <h2 class="text-2xl font-bold mb-4 text-center">Welcome, ${username}!</h2>
+                <p class="mb-4 text-center ">Ready to explore your data? Here's how:</p>
+                <div class="flex justify-around gap-3 items-center max-w-4xl">
+                    <div>
+                        <div class="mb-6">
+                            <p class="font-bold mb-2">1. Request a Bar Chart:</p>
+                            <p><em>Show me a bar chart of sales by payment methods.</em></p>
+                        </div>
+                        <div class="mb-6">
+                            <p class="font-bold mb-2">2. Request a Pie Chart:</p>
+                            <p><em>Show me a pie chart of device types.</em></p>
+                            <p><em>Could you generate a pie chart showing the following countries Kenya and South Africa?</em></p>
+                        </div>
+                        <div class="mb-6">
+                            <p class="font-bold mb-2">3. Request a Scatter Plot:</p>
+                            <p><em>I'd like to see a scatter plot comparing sales and discounts by product categories.</em></p>
+                        </div>
+                        
+                    </div>
+                    <div>
+                        <p class="mb-4 whitespace-nowrap">Here are some available data points for you to explore:</p>
+                        <ul class="list-disc pl-6">
+                            <li>Gender</li>
+                            <li>Device Type</li>
+                            <li>Customer Type</li>
+                            <li>Product Category</li>
+                            <li>Product Type</li>
+                            <li>Order Priority</li>
+                            <li>Payment Methods</li>
+                            <li>Country</li>
+                            <li>Sales</li>
+                            <li>Discount</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                
+                
+                `;
                 document.getElementById('chat-messages').appendChild(welcomeMessage);
+                scrollToBottom();
             } else {
                 alert(data.detail);
             }
@@ -88,20 +140,51 @@
             const userInput = document.getElementById('user-input').value;
             if (userInput.trim() === '') return;
 
-            // Display user message
             const userMessage = document.createElement('div');
-            userMessage.classList.add('user-message');
+            userMessage.classList.add('user-message', 'self-end', 'bg-sky-300', 'text-sky-900', 'p-4', 'rounded-lg', 'mb-4');
+            userMessage.style.width = "fit-content";
             userMessage.textContent = userInput;
             document.getElementById('chat-messages').appendChild(userMessage);
 
-            // Clear input field
+            // const spinner = document.getElementById('spinner');
+            // spinner.classList.remove('hidden');
+            setTimeout(() => {
+                scrollToBottom()
+                    }, 5);
+            
+           
+
             document.getElementById('user-input').value = '';
 
-            // Show loader
-            document.getElementById('loader').style.display = 'block';
+            if (userInput.trim().toLowerCase() === 'help') {
+                const helpMessage = `
+                    <strong>Help Commands:</strong>
+                    <br><strong>help columns</strong> - to see all the columns available
+                    <br><strong>help products</strong> - to see all products available
+                    <br><strong>help product categories</strong> - to see all product categories
+                    <br><strong>help device types</strong> - to see all device types
+                    <br><strong>help customer types</strong> - to see all customer types
+                    <br><strong>help countries</strong> - to see all countries available
+                    <br><strong>help order priorities</strong> - to see all order priorities
+                    <br><strong>help payment methods</strong> - to see all payment methods
+                `;
+                const botMessage = document.createElement('div');
+                botMessage.classList.add('bot-message', 'self-start', 'bg-sky-300', 'text-sky-900', 'p-4', 'rounded-lg', 'mb-4');
+                botMessage.innerHTML = helpMessage;
+                document.getElementById('chat-messages').appendChild(botMessage);
+                scrollToBottom();
 
-            // Send message to server
+                loader.classList.add('hidden');
+                return;
+            }
+
             try {
+                const tokenResponse = await fetch('/get-token', {
+   			method: 'GET',
+    			credentials: 'same-origin' // or 'include' if dealing with cross-origin requests
+		});
+                const tokenData = await tokenResponse.json();
+                const token = tokenData.token;
                 const response = await fetch('/data_request', {
                     method: 'POST',
                     headers: {
@@ -110,36 +193,65 @@
                     },
                     body: JSON.stringify({ text: userInput })
                 });
+                if (await response.status === 401) {
+                    // Handle redirection to login page
+                    window.location.href = '/'; // Redirect to the login page
+                    console.log("here")
+                    return;
+                }
 
-                if (response.headers.get('content-type').includes('application/json')) {
+                const contentType = response.headers.get('content-type');
+
+                if (contentType.includes('application/json')) {
                     const data = await response.json();
 
-                    // Display bot response
                     const botMessage = document.createElement('div');
-                    botMessage.classList.add('bot-message');
+                    botMessage.classList.add('bot-message', 'bg-sky-300', 'text-sky-900', 'p-4', 'rounded-lg', 'mb-4', 'items-center','justify-center', 'flex');
                     botMessage.textContent = data.response;
                     document.getElementById('chat-messages').appendChild(botMessage);
-                } else if (response.headers.get('content-type').includes('image/png')) {
+                } else if (contentType.includes('image/png')) {
                     const blob = await response.blob();
                     const imgUrl = URL.createObjectURL(blob);
 
-                    // Display bot image response
                     const botMessage = document.createElement('div');
-                    botMessage.classList.add('bot-message');
+                    botMessage.classList.add('bot-message', 'self-start', 'bg-sky-300', 'text-sky-900', 'p-4', 'rounded-lg', 'mb-4');
                     const img = document.createElement('img');
                     img.src = imgUrl;
                     img.alt = 'Response Image';
-                    img.style.maxWidth = '100%';  // Ensure the image fits within the chat container
+                    img.style.maxWidth = '100%';
                     botMessage.appendChild(img);
                     document.getElementById('chat-messages').appendChild(botMessage);
+                }
+                 else {
+                    const data = await response.text();
+                    const botMessage = document.createElement('div');
+                    // botMessage.style.width = "fit-content";
+                    botMessage.classList.add('bot-message', 'bg-opacity-25', 'text-white', 'p-4', 'rounded-lg', 'mb-4','items-center','justify-center', 'flex');
+                    botMessage.innerHTML = data;
+                    setTimeout(() => {
+                        const scripts = botMessage.getElementsByTagName('script');
+                        for (let i = 0; i < scripts.length; i++) {
+                            eval(scripts[i].innerText);
+                        }
+                    }, 100);
+                    document.getElementById('chat-messages').appendChild(botMessage);
+
+                    setTimeout(() => {
+                        scrollToBottom();
+                    }, 150);
                 }
             } catch (error) {
                 console.error('Error sending message:', error);
             } finally {
-                // Hide loader
-                document.getElementById('loader').style.display = 'none';
+                spinner.classList.add('hidden');
             }
         }
+
+        function scrollToBottom() {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
     </script>
 </body>
 </html>

@@ -9,6 +9,16 @@ To set up and install this project, proceed with the following steps::
 Terraform is a tool for building, changing, and versioning infrastructure safely and efficiently. In this project, Terraform is used to manage the infrastructure needed for deployment, such as provisioning cloud resources.
 
 To set up Terraform for this project, follow these steps:
+### Install Terraform
+1. Download Terraform from the [official Terraform website](https://www.terraform.io/downloads.html).
+2. Follow the installation instructions for your operating system.
+
+### Verify Terraform Installation
+After installation, verify Terraform is installed correctly by running:
+```
+terraform -version
+
+```
 ### Navigate to the terraform folder
 ```
 cd terraform
@@ -34,23 +44,78 @@ terraform apply -var-file="secrets.tfvars"
 ```
 This command will execute the Terraform configuration and provision the specified infrastructure resources based on the variables and settings provided.
 
+## Redis Installation
+Redis is an in-memory data structure store used as a database, cache, and message broker.
+
+### Install Redis
+To install Redis, follow the instructions for your operating system:
+
+#### For Ubuntu:
+```
+sudo apt update
+sudo apt install redis-server
+```
+#### For macOS using Homebrew:
+``` 
+brew update 
+brew install redis
+```
+
+### Verify Redis Installation
+After installation, verify Redis is installed correctly by running:
+```
+redis-server --version
+``` 
+You should see the version information of Redis.
+
+### Start Redis Server
+```
+redis-server
+```
+
 ## Running Locally 
 If running locally, follow these steps:
-* Install the dependencies listed in the requirements.txt
+### Create a virtual environment
+To create a virtual environment, you can use `venv` if you're using Python 3.
+
+```
+python3 -m venv myenv
+```
+Replace myenv with the desired name of your virtual environment.
+
+### Activating the Virtual Environment
+Once the virtual environment is created, you can activate it.
+#### For Windows:
+```
+myenv\Scripts\activate
+
+```
+#### For macOS and Linux:
+```
+source myenv/bin/activate
+```
+###
+Deactivating the Virtual Environment
+To deactivate the virtual environment, simply run:
+```
+deactivate
+```
+### Install the dependencies listed in the requirements.txt
 ``` 
 pip install -r requirements.txt
 ```
-* Run the main script
+Replace myenv with the desired name of your virtual environment.
+### Run the main script
 ``` 
 python main.py
 ```
 ## If running docker container
-* Build Docker image
+### Build Docker image
 ``` 
 docker build -t databot .
 ```
 
-* Run Docker container
+### Run Docker container
 ``` 
 docker run -p 8000:8000 databot
 ```
